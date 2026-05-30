@@ -1,10 +1,10 @@
 #include "Hooks_NetPacket.h"
-#include "Hooks_Manifest.h"
 #include "Hooks_Misc.h"
 #include "HookMacros.h"
 #include "dllmain.h"
 #include "Utils/AppTicket.h"
 #include "Utils/Hash.h"
+#include "Utils/ManifestClient.h"
 #include <chrono>
 #include <future>
 #include <unordered_map>
@@ -488,7 +488,7 @@ namespace Hooks_NetPacket_Manifest {
         auto task = std::async(std::launch::async,
             [manifestGid, depotId, appId]() -> uint64 {
                 uint64 code = 0;
-                Hooks_Manifest::FetchManifestRequestCode(manifestGid, &code, appId, depotId);
+                ManifestClient::FetchManifestRequestCode(manifestGid, &code, appId, depotId);
                 return code;
             });
 

@@ -6,14 +6,11 @@
 
 namespace Config {
 
-    enum class ManifestUrl { SteamRun, Wudrm };
-
     enum class LogLevel { Trace, Debug, Info, Warn, Error };
 
     void Load(const std::string& configPath);
 
-    // [manifest]
-    inline ManifestUrl manifestUrl = ManifestUrl::Wudrm;
+    // [manifest] — provider selection lives in ManifestClient (table-driven).
     inline DWORD manifestTimeoutResolve = 5000;
     inline DWORD manifestTimeoutConnect = 5000;
     inline DWORD manifestTimeoutSend    = 10000;

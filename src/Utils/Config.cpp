@@ -1,5 +1,6 @@
 #include "Config.h"
 #include "Log.h"
+#include "ManifestClient.h"
 #include <toml++/toml.hpp>
 #include <filesystem>
 
@@ -20,8 +21,8 @@ namespace Config {
             // [manifest]
             if (auto manifest = tbl["manifest"].as_table()) {
                 if (auto val = (*manifest)["url"].value<std::string>()) {
-                    if (*val == "wudrm")
-                        manifestUrl = ManifestUrl::Wudrm;
+                    if (!ManifestClient::SetProvider(*val))
+                        LOG_WARN("Unknown manifest.url \"{}\", keeping default", *val);
                 }
                 if (auto val = (*manifest)["timeout_resolve_ms"].value<int64_t>())
                     manifestTimeoutResolve = static_cast<DWORD>(*val);
@@ -67,7 +68,7 @@ namespace Config {
             }
 
             LOG_INFO("Config loaded: manifest.url={} log.level={} lua.paths={} pattern.mirror={}",
-                     manifestUrl == ManifestUrl::Wudrm ? "wudrm" : "steamrun",
+                     ManifestClient::ActiveProviderName(),
                      [&](){
                          switch (logLevel) {
                          case LogLevel::Trace: return "trace";

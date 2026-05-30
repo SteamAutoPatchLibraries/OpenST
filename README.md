@@ -14,7 +14,7 @@ OpenSteamTool is a Windows DLL project built with CMake.
 - Unlock an unlimited number of unowned games.
 - Unlock all DLCs for unowned games.
 - Support auto load depot decryption keys from Lua config.
-- Support auto manifest download via `steamrun` / `wudrm` upstream APIs(default is `wudrm`), or a custom Lua endpoint (see [Manifest via Lua](#manifest-via-lua)).
+- Support auto manifest download via `opensteamtool` / `steamrun` / `wudrm` upstream APIs (default is `opensteamtool`), or a custom Lua endpoint (see [Manifest via Lua](#manifest-via-lua)).
 - Support downloading protected games or DLCs that require an access token.
 - Support binding manifest to prevent specific games from being updated.
 
@@ -81,8 +81,8 @@ If no config file is found, built-in defaults are used — no auto-creation.
 level = "info"
 
 [manifest]
-# Upstream API for depot manifest request codes.  Options: "steamrun", "wudrm"
-url = "steamrun"
+# Upstream API for depot manifest request codes.  Options: "opensteamtool", "steamrun", "wudrm"
+url = "opensteamtool"
 
 # HTTP timeouts for manifest requests (milliseconds)
 timeout_resolve_ms = 5000
