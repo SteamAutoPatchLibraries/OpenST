@@ -3,7 +3,6 @@
 #include "Hooks_SteamUI.h"
 #include "dllmain.h"
 #include "Utils/VehCommon.h"
-#include <thread>
 
 namespace {
     RESOLVE_FUNC(CUtlMemoryGrow,               void*, CUtlVector<AppId_t>*, int);
@@ -134,9 +133,6 @@ namespace Hooks_Package {
         UNHOOK_END();
     }
 
-    constexpr size_t kBatchSize = 50;
-    constexpr DWORD  kBatchSleepMs = 20;
-    
     void NotifyLicenseChanged() {
         PackageInfo* pPkg = g_pInjectedPackageInfo;
         if (!pPkg) {
@@ -184,14 +180,9 @@ namespace Hooks_Package {
         }
         LOG_PACKAGE_INFO("NotifyLicenseChanged: {} added, {} removed", additions.size(), removedCount);
 
-        // every kBatchSize ids changed, sleep kBatchSleepMs milliseconds
-        size_t i = 0;
-        for (AppId_t id : removals) {
-            if (++i % kBatchSize == 0) {
-                LOG_PACKAGE_DEBUG("NotifyLicenseChanged: processed {} removals, sleeping for {} ms...", i, kBatchSleepMs);
-                std::this_thread::sleep_for(std::chrono::milliseconds(kBatchSleepMs));
-            }
-            Hooks_SteamUI::RemoveAppAndSendChange(id);
-        }
+        // Queue UI removals for the main-thread RunFrame hook to drain.
+        // Never touch MarkAppChange from this (FileWatcher) thread.
+        for (AppId_t id : removals)
+            Hooks_SteamUI::QueueRemoval(id);
     }
 }
